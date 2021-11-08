@@ -30,7 +30,7 @@ public class UserController {
 	}
 	
 	//Create
-	@PostMapping
+	@PostMapping("/add")
 	public ResponseEntity<User> addUser(@RequestBody User user) {
 		
 		service.save(user);
@@ -38,7 +38,7 @@ public class UserController {
 	}
 	
 	//Read
-	@GetMapping
+	@GetMapping("/all")
 	public ResponseEntity<List<User>> readAllUsers() {
 		
 		List<User> users = service.readAll();
@@ -48,24 +48,27 @@ public class UserController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<User> readFlightById(@PathVariable int id) {
+	public ResponseEntity<User> readUsersById(@PathVariable int id) {
 		
 		User user = service.readById(id).orElseThrow(IdNotFoundException::new);
-		return ResponseEntity.ok(user);
+		return ResponseEntity.ok().body(user);
 	}
 	
 	//Update
-	@PutMapping("/{id}")
+	@PutMapping("/update/{id}")
 	public ResponseEntity<String> updateUser(@PathVariable int id, @RequestBody User user) {
 		
+		//Check if path id = user id
 		if(id != user.getId())
 			throw new IdMismatchException();
+		//Check if the record to update exists
+		User temp = service.readById(id).orElseThrow(IdNotFoundException::new);
 		service.save(user);
 		return ResponseEntity.ok("User saved successfully");
 	}
 	
 	//Delete
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<Void> deleteUser(@PathVariable int id) {
 		
 		service.delete(id);

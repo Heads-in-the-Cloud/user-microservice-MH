@@ -39,6 +39,6 @@ public class UserService {
 	
 	public void delete(int id) {
 		
-		dao.findById(id).ifPresent(dao::delete);
+		dao.deleteById(id);
 	}
 }

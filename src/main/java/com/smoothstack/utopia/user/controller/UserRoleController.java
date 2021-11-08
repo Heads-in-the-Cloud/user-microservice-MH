@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smoothstack.utopia.user.entity.User;
 import com.smoothstack.utopia.user.entity.UserRole;
 import com.smoothstack.utopia.user.exception.*;
 import com.smoothstack.utopia.user.service.UserRoleService;
@@ -30,7 +31,7 @@ public class UserRoleController {
 	}
 	
 	//Create
-	@PostMapping
+	@PostMapping("/add")
 	public ResponseEntity<UserRole> addUserRole(@RequestBody UserRole userRole) {
 		
 		service.save(userRole);
@@ -48,7 +49,7 @@ public class UserRoleController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<UserRole> readFlightById(@PathVariable int id) {
+	public ResponseEntity<UserRole> readUserRoleById(@PathVariable int id) {
 		
 		UserRole userRole = service.readById(id).orElseThrow(IdNotFoundException::new);
 		return ResponseEntity.ok(userRole);
@@ -58,14 +59,17 @@ public class UserRoleController {
 	@PutMapping("/{id}")
 	public ResponseEntity<String> updateUserRole(@PathVariable int id, @RequestBody UserRole userRole) {
 		
+		//Check if path id = user id
 		if(id != userRole.getId())
 			throw new IdMismatchException();
+		//Check if record to update exists
+		UserRole temp = service.readById(id).orElseThrow(IdNotFoundException::new);
 		service.save(userRole);
 		return ResponseEntity.ok("Role saved successfully");
 	}
 	
 	//Delete
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<Void> deleteUserRole(@PathVariable int id) {
 		
 		service.delete(id);
